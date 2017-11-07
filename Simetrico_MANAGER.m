@@ -7,16 +7,15 @@ delete(instrfind);
 %% Definiciones Experimento
 
 % Numero de bips por trial.
-N_stim = 20;
+N_stim = 35;
 % Repeticiones por condicion.
-n=2;
-n_calibracion=2;
+n=10;
+n_calibracion=10;
 n_entrenamiento=1;
 % Parametros Calibración
 out_limit=150;
 % Perturbaciones mecanicas
-mech_sizes = [33 100]; % tamaï¿½o de la perturbaciï¿½n
-% mech_sizes = [103]; % tamaï¿½o de la perturbaciï¿½n
+mech_sizes = [33 95]; % tamaï¿½o de la perturbaciï¿½n
 servo_ini_pos=57;
 % mech_bip_range = [10 13];    % rango de bip
 mech_bip_range = [15 18];    % rango de bip
@@ -29,12 +28,12 @@ exp='simetrico'; % sufijo del .mat del experimento
 filename=['sujetos_' exp '.mat'];
 [ sujeto,sujeto_number ] = f_DatosSujeto(dir, exp);
 
-%% Abre archivos temporales
-tent = fopen('temporal_simetrico_ent','w');
-tent = fopen('temporal_simetrico_cal','w');
-texp = fopen('temporal_simetrico_exp','w');
+
+
+
 
 %% Entrenamiento
+tent = fopen('temporal_simetrico_ent','w'); % Abre archivos temporales
 temp_sizes=[-20 20];
 step=1;
 conditions='full';
@@ -59,6 +58,7 @@ pause()
 save(filename,'sujeto')
 
 %% Calibración
+tcal = fopen('temporal_simetrico_cal','w');
 step=2;
 temp_sizes=0;
 mech_sizes=mech_sizes(mech_sizes~=57);
@@ -81,6 +81,7 @@ disp(' ');
 pause()
 
 %% Experimento
+texp = fopen('temporal_simetrico_exp','w');
 step=3;
 [temp_sizes,esc_sizes] = Parametros_calibracion_exp(sujeto_number,sujeto,out_limit,mech_sizes);
 altura=esc_sizes;
