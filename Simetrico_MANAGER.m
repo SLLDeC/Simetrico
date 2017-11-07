@@ -17,8 +17,9 @@ out_limit=150;
 % Perturbaciones mecanicas
 mech_sizes = [33 95]; % tamaï¿½o de la perturbaciï¿½n
 servo_ini_pos=57;
-% mech_bip_range = [10 13];    % rango de bip
-mech_bip_range = [15 18];    % rango de bip
+mech_bip_range = [15 20];    % rango de bip
+% Categorias de -M
+cat_M=[15 30 45];
 
 cond_mech = max(size(mech_sizes));
 
@@ -27,10 +28,6 @@ dir=pwd;
 exp='simetrico'; % sufijo del .mat del experimento
 filename=['sujetos_' exp '.mat'];
 [ sujeto,sujeto_number ] = f_DatosSujeto(dir, exp);
-
-
-
-
 
 %% Entrenamiento
 tent = fopen('temporal_simetrico_ent','w'); % Abre archivos temporales
@@ -53,6 +50,7 @@ end
 disp('Fin del entrenamiento. Presione una tecla para comenzar con el experimento');
 disp(' ');
 pause()
+fclose(tent);
 
 %% Guarda todos los datos
 save(filename,'sujeto')
@@ -79,15 +77,16 @@ end
 disp('Fin de la primera parte.! Presione una tecla para continuar');
 disp(' ');
 pause()
+fclose(tcal);
 
 %% Experimento
 texp = fopen('temporal_simetrico_exp','w');
 step=3;
-[temp_sizes,esc_sizes] = Parametros_calibracion_exp(sujeto_number,sujeto,out_limit,mech_sizes);
+[temp_sizes,esc_sizes] = Parametros_calibracion_exp(cat_M,sujeto_number,sujeto,out_limit,mech_sizes);
 altura=esc_sizes;
 [ angulo ] = alt2ang_servo( altura );
 mech_sizes=angulo;
-conditions='full-iso';
+conditions='full';
 [trial,bad,mech_sizes,temp_sizes] = Loop_central_SIMETRICO(conditions,exp,temp_sizes,step,N_stim,n,n_entrenamiento,n_calibracion,servo_ini_pos,cond_mech,mech_sizes,mech_bip_range);
 % Guarda los datos
 sujeto(sujeto_number).exp=trial;
@@ -106,6 +105,7 @@ disp(' ');
 
 %% Guarda los datos en el mat en común
 save(filename,'sujeto')
+fclose(texp);
 %% Guarda los datos del sujeto en su propia carpeta
 mkdir(fullfile('data',num2str(sujeto_number)))
 movefile('temporal_simetrico_ent.mat',fullfile('data',num2str(sujeto_number),[num2str(sujeto_number) '_data_simetrico_ent.mat']));
